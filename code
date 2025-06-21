@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaClone - Social Media Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles */
+        .story-circle {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            padding: 2px;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+        
+        .story-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid white;
+            overflow: hidden;
+        }
+        
+        .post-actions i {
+            transition: transform 0.2s;
+        }
+        
+        .post-actions i:hover {
+            transform: scale(1.1);
+        }
+        
+        .like-animation {
+            animation: heartBeat 0.5s;
+        }
+        
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.3); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.3); }
+            70% { transform: scale(1); }
+        }
+        
+        .story-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .suggestions-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        /* Hide scrollbar but keep functionality */
+        .suggestions-container::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Main Container -->
+    <div class="flex max-w-screen-lg mx-auto">
+        <!-- Left Sidebar (hidden on small screens) -->
+        <div class="hidden md:block fixed w-1/5 pr-4 mt-8">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold mb-1">InstaClone</h1>
+                <p class="text-gray-500 text-sm">Welcome back!</p>
+            </div>
+            
+            <nav class="mb-8">
+                <ul class="space-y-2">
+                    <li class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-home text-2xl"></i>
+                        <span class="font-medium">Home</span>
+                    </li>
+                    <li class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-search text-2xl"></i>
+                        <span class="font-medium">Search</span>
+                    </li>
+                    <li class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-compass text-2xl"></i>
+                        <span class="font-medium">Explore</span>
+                    </li>
+                    <li class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-film text-2xl"></i>
+                        <span class="font-medium">Reels</span>
+                    </li>
+                    <li class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-envelope text-2xl"></i>
+                        <span class="font-medium">Messages</span>
+                    </li>
+                    <li class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-heart text-2xl"></i>
+                        <span class="font-medium">Notifications</span>
+                    </li>
+                    <li class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-plus-square text-2xl"></i>
+                        <span class="font-medium">Create</span>
+                    </li>
+                    <li class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                        <i class="fas fa-user text-2xl"></i>
+                        <span class="font-medium">Profile</span>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="mt-6">
+                <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 w-full">
+                    <i class="fas fa-cog text-2xl"></i>
+                    <span class="font-medium">Settings</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="w-full md:w-3/5 md:ml-[20%]">
+            <!-- Stories -->
+            <div class="bg-white rounded-lg shadow-sm p-4 mb-4 overflow-x-auto">
+                <div class="flex space-x-4">
+                    <!-- Story circles -->
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="relative">
+                            <div class="story-circle">
+                                <div class="story-inner">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-full h-full object-cover" alt="Your story">
+                                </div>
+                            </div>
+                            <div class="absolute bottom-0 right-0 bg-blue-500 rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
+                                <i class="fas fa-plus text-white text-xs"></i>
+                            </div>
+                        </div>
+                        <span class="text-xs">Your Story</span>
+                    </div>
+                    
+                    <!-- Sample stories -->
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="story-circle">
+                            <div class="story-inner">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-full h-full object-cover" alt="Story">
+                            </div>
+                        </div>
+                        <span class="text-xs">john_doe</span>
+                    </div>
+                    
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="story-circle">
+                            <div class="story-inner">
+                                <img src="https://randomuser.me/api/portraits/women/67.jpg" class="w-full h-full object-cover" alt="Story">
+                            </div>
+                        </div>
+                        <span class="text-xs">jane_smith</span>
+                    </div>
+                    
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="story-circle">
+                            <div class="story-inner">
+                                <img src="https://randomuser.me/api/portraits/men/75.jpg" class="w-full h-full object-cover" alt="Story">
+                            </div>
+                        </div>
+                        <span class="text-xs">traveler_123</span>
+                    </div>
+                    
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="story-circle">
+                            <div class="story-inner">
+                                <img src="https://randomuser.me/api/portraits/women/23.jpg" class="w-full h-full object-cover" alt="Story">
+                            </div>
+                        </div>
+                        <span class="text-xs">foodie_adventures</span>
+                    </div>
+                    
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="story-circle">
+                            <div class="story-inner">
+                                <img src="https://randomuser.me/api/portraits/men/89.jpg" class="w-full h-full object-cover" alt="Story">
+                            </div>
+                        </div>
+                        <span class="text-xs">tech_guy</span>
+                    </div>
+                    
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="story-circle">
+                            <div class="story-inner">
+                                <img src="https://randomuser.me/api/portraits/women/56.jpg" class="w-full h-full object-cover" alt="Story">
+                            </div>
+                        </div>
+                        <span class="text-xs">fitness_trainer</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Post 1 -->
+            <div class="bg-white rounded-lg shadow-sm mb-4">
+                <!-- Post header -->
+                <div class="flex items-center justify-between p-3 border-b">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-full h-full object-cover" alt="Profile">
+                        </div>
+                        <span class="font-medium">your_username</span>
+                    </div>
+                    <button>
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                
+                <!-- Post image -->
+                <div class="relative">
+                    <img src="https://source.unsplash.com/random/600x600/?nature" class="w-full" alt="Post">
+                    <div class="absolute top-4 right-4 bg-white rounded-full p-2 hidden" id="like-heart">
+                        <i class="fas fa-heart text-red-500 text-4xl like-animation"></i>
+                    </div>
+                </div>
+                
+                <!-- Post actions -->
+                <div class="p-3">
+                    <div class="flex justify-between mb-2 post-actions">
+                        <div class="flex space-x-4">
+                            <button id="like-btn">
+                                <i class="far fa-heart text-2xl"></i>
+                            </button>
+                            <button>
+                                <i class="far fa-comment text-2xl"></i>
+                            </button>
+                            <button>
+                                <i class="far fa-paper-plane text-2xl"></i>
+                            </button>
+                        </div>
+                        <button>
+                            <i class="far fa-bookmark text-2xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Likes -->
+                    <div class="mb-1">
+                        <span class="font-medium">1,234 likes</span>
+                    </div>
+                    
+                    <!-- Caption -->
+                    <div class="mb-1">
+                        <span class="font-medium">your_username</span> Beautiful day in the mountains! 🏔️ #nature #adventure
+                    </div>
+                    
+                    <!-- Comments -->
+                    <div class="text-gray-500 mb-1">
+                        View all 42 comments
+                    </div>
+                    
+                    <!-- Time posted -->
+                    <div class="text-gray-400 text-xs">
+                        2 HOURS AGO
+                    </div>
+                </div>
+                
+                <!-- Add comment -->
+                <div class="border-t p-3 flex items-center">
+                    <input type="text" placeholder="Add a comment..." class="w-full outline-none">
+                    <button class="text-blue-500 font-medium">Post</button>
+                </div>
+            </div>
+            
+            <!-- Post 2 -->
+            <div class="bg-white rounded-lg shadow-sm mb-4">
+                <!-- Post header -->
+                <div class="flex items-center justify-between p-3 border-b">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" class="w-full h-full object-cover" alt="Profile">
+                        </div>
+                        <span class="font-medium">traveler_123</span>
+                    </div>
+                    <button>
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                
+                <!-- Post image -->
+                <div class="relative">
+                    <img src="https://source.unsplash.com/random/600x600/?city" class="w-full" alt="Post">
+                </div>
+                
+                <!-- Post actions -->
+                <div class="p-3">
+                    <div class="flex justify-between mb-2 post-actions">
+                        <div class="flex space-x-4">
+                            <button>
+                                <i class="far fa-heart text-2xl"></i>
+                            </button>
+                            <button>
+                                <i class="far fa-comment text-2xl"></i>
+                            </button>
+                            <button>
+                                <i class="far fa-paper-plane text-2xl"></i>
+                            </button>
+                        </div>
+                        <button>
+                            <i class="far fa-bookmark text-2xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Likes -->
+                    <div class="mb-1">
+                        <span class="font-medium">892 likes</span>
+                    </div>
+                    
+                    <!-- Caption -->
+                    <div class="mb-1">
+                        <span class="font-medium">traveler_123</span> Exploring the city streets today. Urban life has its own charm! 🌆 #citylife #explore
+                    </div>
+                    
+                    <!-- Comments -->
+                    <div class="text-gray-500 mb-1">
+                        View all 23 comments
+                    </div>
+                    
+                    <!-- Time posted -->
+                    <div class="text-gray-400 text-xs">
+                        5 HOURS AGO
+                    </div>
+                </div>
+                
+                <!-- Add comment -->
+                <div class="border-t p-3 flex items-center">
+                    <input type="text" placeholder="Add a comment..." class="w-full outline-none">
+                    <button class="text-blue-500 font-medium">Post</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Sidebar (hidden on small screens) -->
+        <div class="hidden md:block fixed right-0 w-1/5 pl-4 mt-8">
+            <!-- User profile -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full overflow-hidden">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-full h-full object-cover" alt="Profile">
+                    </div>
+                    <div>
+                        <div class="font-medium">your_username</div>
+                        <div class="text-gray-500 text-sm">Jane Doe</div>
+                    </div>
+                </div>
+                <button class="text-blue-500 text-xs font-medium">Switch</button>
+            </div>
+            
+            <!-- Suggestions -->
+            <div class="mb-3 flex justify-between">
+                <span class="text-gray-500 font-medium">Suggestions For You</span>
+                <button class="text-xs font-medium">See All</button>
+            </div>
+            
+            <div class="suggestions-container">
+                <!-- Suggested user 1 -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/women/12.jpg" class="w-full h-full object-cover" alt="Profile">
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium">photography_lover</div>
+                            <div class="text-gray-400 text-xs">Followed by user123</div>
+                        </div>
+                    </div>
+                    <button class="text-blue-500 text-xs font-medium">Follow</button>
+                </div>
+                
+                <!-- Suggested user 2 -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/men/45.jpg" class="w-full h-full object-cover" alt="Profile">
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium">fitness_coach</div>
+                            <div class="text-gray-400 text-xs">New to InstaClone</div>
+                        </div>
+                    </div>
+                    <button class="text-blue-500 text-xs font-medium">Follow</button>
+                </div>
+                
+                <!-- Suggested user 3 -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/women/33.jpg" class="w-full h-full object-cover" alt="Profile">
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium">food_explorer</div>
+                            <div class="text-gray-400 text-xs">Followed by 5 others</div>
+                        </div>
+                    </div>
+                    <button class="text-blue-500 text-xs font-medium">Follow</button>
+                </div>
+                
+                <!-- Suggested user 4 -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full overflow-hidden">
+                            <img src="https://randomuser.me/api/portraits/men/22.jpg" class="w-full h-full object-cover" alt="Profile">
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium">travel_buddy</div>
+                            <div class="text-gray-400 text-xs">New to Inst
